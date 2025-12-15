@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Recommendation System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .song-suggestions {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .song-suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+
+        .song-suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .song-suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .selected-song {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .selected-song h3 {
+            margin-bottom: 10px;
+        }
+
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .recommendation-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.2em;
+        }
+
+        .recommendation-card p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .similarity-score {
+            display: inline-block;
+            background: #e8e8e8;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .error {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .info-section h3 {
+            margin-bottom: 15px;
+        }
+
+        .info-section ul {
+            list-style-position: inside;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Song Recommendation System</h1>
+            <p>Discover similar songs using AI-powered content-based filtering</p>
+        </div>
+
+        <div class="info-section">
+            <h3>How it works:</h3>
+            <ul>
+                <li>Enter a song name to find similar recommendations</li>
+                <li>The system uses TF-IDF vectorization to analyze song content</li>
+                <li>Cosine similarity finds songs with similar features</li>
+                <li>Get personalized recommendations based on song content</li>
+            </ul>
+        </div>
+
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="songInput" placeholder="Enter song name (e.g., 'Shape of You')" autocomplete="off">
+                <button class="btn" onclick="getRecommendations()">Get Recommendations</button>
+            </div>
+            <div class="song-suggestions" id="suggestions"></div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="selected-song" id="selectedSong"></div>
+            <div class="recommendations" id="recommendations"></div>
+        </div>
+
+        <div class="loading" id="loading" style="display: none;">
+            <p>🎶 Analyzing songs and finding recommendations...</p>
+        </div>
+
+        <div class="error" id="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Auto-detect API URL (works for both local and hosted)
+        const API_BASE_URL = window.location.origin + '/api';
+        let searchTimeout;
+
+        // Search suggestions as user types
+        document.getElementById('songInput').addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+            clearTimeout(searchTimeout);
+            
+            if (query.length < 2) {
+                document.getElementById('suggestions').style.display = 'none';
+                return;
+            }
+
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/search?query=${encodeURIComponent(query)}&limit=10`);
+                    const data = await response.json();
+                    
+                    const suggestionsDiv = document.getElementById('suggestions');
+                    if (data.results && data.results.length > 0) {
+                        suggestionsDiv.innerHTML = data.results.map(song => 
+                            `<div class="song-suggestion-item" onclick="selectSong('${song.song.replace(/'/g, "\\'")}', '${song.artist.replace(/'/g, "\\'")}')">
+                                <strong>${song.song}</strong> - ${song.artist}
+                            </div>`
+                        ).join('');
+                        suggestionsDiv.style.display = 'block';
+                    } else {
+                        suggestionsDiv.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error fetching suggestions:', error);
+                }
+            }, 300);
+        });
+
+        function selectSong(songName, artistName) {
+            document.getElementById('songInput').value = songName;
+            document.getElementById('suggestions').style.display = 'none';
+            getRecommendations(songName, artistName);
+        }
+
+        async function getRecommendations(songName = null, artistName = null) {
+            const songInput = document.getElementById('songInput');
+            const song = songName || songInput.value.trim();
+            
+            if (!song) {
+                showError('Please enter a song name');
+                return;
+            }
+
+            // Hide previous results and show loading
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                let url = `${API_BASE_URL}/recommend?song_name=${encodeURIComponent(song)}&num_recommendations=12`;
+                if (artistName) {
+                    url += `&artist_name=${encodeURIComponent(artistName)}`;
+                }
+
+                const response = await fetch(url, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to get recommendations');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function displayResults(data) {
+            const resultsSection = document.getElementById('resultsSection');
+            const selectedSongDiv = document.getElementById('selectedSong');
+            const recommendationsDiv = document.getElementById('recommendations');
+
+            // Display selected song
+            selectedSongDiv.innerHTML = `
+                <h3>🎵 Selected Song</h3>
+                <p><strong>${data.selected_song.song}</strong> by ${data.selected_song.artist}</p>
+            `;
+
+            // Display recommendations
+            if (data.recommendations && data.recommendations.length > 0) {
+                recommendationsDiv.innerHTML = data.recommendations.map(rec => `
+                    <div class="recommendation-card">
+                        <h4>${rec.song}</h4>
+                        <p><strong>Artist:</strong> ${rec.artist}</p>
+                        <span class="similarity-score">Similarity: ${(rec.similarity_score * 100).toFixed(1)}%</span>
+                    </div>
+                `).join('');
+            } else {
+                recommendationsDiv.innerHTML = '<p>No recommendations found.</p>';
+            }
+
+            resultsSection.style.display = 'block';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = `Error: ${message}`;
+            errorDiv.style.display = 'block';
+        }
+
+        // Allow Enter key to trigger search
+        document.getElementById('songInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                getRecommendations();
+            }
+        });
+    </script>
+</body>
+</html>
+
