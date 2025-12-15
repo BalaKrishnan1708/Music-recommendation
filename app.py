@@ -18,10 +18,17 @@ def load_and_preprocess_data():
     global df, tfidf_matrix, vectorizer
     
     print("Loading dataset...")
+    # Load dataset in chunks to reduce memory usage
     df = pd.read_csv('spotify_millsongdata.csv')
     
     # Clean the data - remove any rows with missing values
     df = df.dropna()
+    
+    # OPTIMIZATION: Sample dataset for free tier (reduce to 20,000 songs to fit in 512MB)
+    # Remove this line if you upgrade to a paid plan
+    if len(df) > 20000:
+        print(f"Sampling dataset from {len(df)} to 20000 songs for memory optimization...")
+        df = df.sample(n=20000, random_state=42).reset_index(drop=True)
     
     # Combine relevant features: artist, song name, and lyrics
     df['combined_features'] = df['artist'].astype(str) + ' ' + df['song'].astype(str) + ' ' + df['text'].astype(str)
@@ -32,14 +39,14 @@ def load_and_preprocess_data():
     print(f"Dataset loaded: {len(df)} songs")
     print("Applying TF-IDF vectorization...")
     
-    # Initialize TF-IDF Vectorizer
+    # Initialize TF-IDF Vectorizer with reduced parameters for memory efficiency
     # max_features limits the vocabulary size for efficiency
-    # ngram_range=(1,2) considers both single words and word pairs
+    # ngram_range=(1,1) uses only single words (reduces memory)
     vectorizer = TfidfVectorizer(
-        max_features=5000,
+        max_features=3000,  # Reduced from 5000
         stop_words='english',
-        ngram_range=(1, 2),
-        min_df=2,
+        ngram_range=(1, 1),  # Changed from (1,2) to (1,1) to reduce memory
+        min_df=3,  # Increased from 2 to reduce vocabulary
         max_df=0.95
     )
     
