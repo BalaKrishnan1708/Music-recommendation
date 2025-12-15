@@ -64,7 +64,7 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown (if needed, cleanup code would go here)
 
-app = FastAPI(title="Song Recommendation System", lifespan=lifespan)
+app = FastAPI(title="Song Recommendation System - Enhanced UI", lifespan=lifespan)
 
 # Enable CORS for frontend
 app.add_middleware(
