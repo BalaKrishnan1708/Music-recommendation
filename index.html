@@ -3,8 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Song Recommendation System</title>
+    <title>Song Recommendation System | AI-Powered Music Discovery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,79 +32,181 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             min-height: 100vh;
             padding: 20px;
+            color: var(--text-primary);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
+        /* Header */
         .header {
             text-align: center;
             color: white;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            letter-spacing: -0.5px;
+        }
+
+        .header .subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        .header .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card .icon {
+            font-size: 2rem;
+            color: var(--primary);
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
         }
 
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Search Section */
         .search-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-xl);
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .search-header {
+            margin-bottom: 25px;
+        }
+
+        .search-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .search-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
         .search-box {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
         }
 
         .search-box input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            width: 100%;
+            padding: 18px 20px 18px 55px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: white;
         }
 
         .search-box input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
         .btn {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
         }
 
-        .btn:active {
+        .btn:active:not(:disabled) {
             transform: translateY(0);
         }
 
@@ -94,160 +216,541 @@
         }
 
         .song-suggestions {
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin-top: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            margin-top: 15px;
             display: none;
+            background: white;
+            box-shadow: var(--shadow-lg);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .song-suggestions::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .song-suggestions::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .song-suggestions::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
         }
 
         .song-suggestion-item {
-            padding: 10px 15px;
+            padding: 15px 20px;
             cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background-color 0.2s;
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .song-suggestion-item:hover {
-            background-color: #f5f5f5;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
+            padding-left: 25px;
         }
 
         .song-suggestion-item:last-child {
             border-bottom: none;
         }
 
+        .song-suggestion-item i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        /* Results Section */
         .results-section {
             display: none;
+            animation: fadeIn 0.5s ease-out;
         }
 
-        .selected-song {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .selected-song-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
         }
 
-        .selected-song h3 {
-            margin-bottom: 10px;
+        .selected-song-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .selected-song-card .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .selected-song-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .selected-song-card .song-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .selected-song-card .artist-name {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .recommendations-header {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recommendations-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .recommendations-count {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
         }
 
         .recommendations {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
         }
 
         .recommendation-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s;
         }
 
         .recommendation-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .recommendation-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .recommendation-card .rank {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .recommendation-card .song-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            opacity: 0.8;
         }
 
         .recommendation-card h4 {
-            color: #667eea;
-            margin-bottom: 8px;
-            font-size: 1.2em;
-        }
-
-        .recommendation-card p {
-            color: #666;
+            color: var(--text-primary);
             margin-bottom: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1.3;
         }
 
-        .similarity-score {
-            display: inline-block;
-            background: #e8e8e8;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            color: #555;
+        .recommendation-card .artist {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
+        .similarity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .similarity-badge .score {
+            font-size: 1.1rem;
+        }
+
+        /* Loading */
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px 20px;
             color: white;
-            font-size: 1.2em;
         }
 
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .loading p {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+
+        /* Error */
         .error {
-            background: #ff6b6b;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            padding: 20px 25px;
+            border-radius: 12px;
             margin-top: 20px;
+            border: 2px solid var(--error);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: shake 0.5s;
         }
 
+        .error i {
+            font-size: 1.5rem;
+        }
+
+        /* Info Section */
         .info-section {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeInUp 0.8s ease-out 0.6s both;
         }
 
         .info-section h3 {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .info-section ul {
-            list-style-position: inside;
-            line-height: 1.8;
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+        }
+
+        .info-item i {
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.9);
+            margin-top: 3px;
+        }
+
+        .info-item div {
+            flex: 1;
+        }
+
+        .info-item strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .info-item p {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            line-height: 1.5;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .recommendations {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎵 Song Recommendation System</h1>
-            <p>Discover similar songs using AI-powered content-based filtering</p>
+            <div class="icon">🎵</div>
+            <h1>Song Recommendation System</h1>
+            <p class="subtitle">Discover your next favorite song with AI-powered content-based filtering</p>
+        </div>
+
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-music"></i></div>
+                <div class="value" id="totalSongs">-</div>
+                <div class="label">Total Songs</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-microphone"></i></div>
+                <div class="value" id="totalArtists">-</div>
+                <div class="label">Artists</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-brain"></i></div>
+                <div class="value">AI-Powered</div>
+                <div class="label">Recommendations</div>
+            </div>
         </div>
 
         <div class="info-section">
-            <h3>How it works:</h3>
-            <ul>
-                <li>Enter a song name to find similar recommendations</li>
-                <li>The system uses TF-IDF vectorization to analyze song content</li>
-                <li>Cosine similarity finds songs with similar features</li>
-                <li>Get personalized recommendations based on song content</li>
-            </ul>
+            <h3><i class="fas fa-info-circle"></i> How It Works</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <i class="fas fa-search"></i>
+                    <div>
+                        <strong>Search & Discover</strong>
+                        <p>Enter a song name and get instant recommendations based on content similarity</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-code"></i>
+                    <div>
+                        <strong>TF-IDF Analysis</strong>
+                        <p>Advanced text vectorization analyzes song lyrics, artist, and title to find patterns</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-chart-line"></i>
+                    <div>
+                        <strong>Cosine Similarity</strong>
+                        <p>Mathematical algorithm calculates similarity scores to match your music taste</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-star"></i>
+                    <div>
+                        <strong>Personalized Results</strong>
+                        <p>Get recommendations tailored to your selected song's unique characteristics</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="search-section">
+            <div class="search-header">
+                <h2><i class="fas fa-compass"></i> Find Similar Songs</h2>
+                <p>Start typing a song name to see suggestions, or enter a song directly</p>
+            </div>
             <div class="search-box">
-                <input type="text" id="songInput" placeholder="Enter song name (e.g., 'Shape of You')" autocomplete="off">
-                <button class="btn" onclick="getRecommendations()">Get Recommendations</button>
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="songInput" placeholder="Search for a song (e.g., 'Shape of You', 'Bohemian Rhapsody')" autocomplete="off">
+                </div>
+                <button class="btn" onclick="getRecommendations()" id="searchBtn">
+                    <i class="fas fa-magic"></i>
+                    <span>Get Recommendations</span>
+                </button>
             </div>
             <div class="song-suggestions" id="suggestions"></div>
         </div>
 
         <div class="results-section" id="resultsSection">
-            <div class="selected-song" id="selectedSong"></div>
+            <div class="selected-song-card">
+                <div class="content">
+                    <h3><i class="fas fa-headphones"></i> Selected Song</h3>
+                    <div class="song-name" id="selectedSongName"></div>
+                    <div class="artist-name" id="selectedArtistName"></div>
+                </div>
+            </div>
+            <div class="recommendations-header">
+                <h2><i class="fas fa-thumbs-up"></i> Recommended For You</h2>
+                <div class="recommendations-count" id="recommendationsCount"></div>
+            </div>
             <div class="recommendations" id="recommendations"></div>
         </div>
 
         <div class="loading" id="loading" style="display: none;">
-            <p>🎶 Analyzing songs and finding recommendations...</p>
+            <div class="loading-spinner"></div>
+            <p><i class="fas fa-music"></i> Analyzing songs and finding perfect matches...</p>
         </div>
 
-        <div class="error" id="error" style="display: none;"></div>
+        <div class="error" id="error" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorMessage"></span>
+        </div>
     </div>
 
     <script>
-        // Auto-detect API URL (works for both local and hosted)
         const API_BASE_URL = window.location.origin + '/api';
         let searchTimeout;
 
-        // Search suggestions as user types
+        // Load stats on page load
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                if (data.total_songs) {
+                    document.getElementById('totalSongs').textContent = data.total_songs.toLocaleString();
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Search suggestions
         document.getElementById('songInput').addEventListener('input', function(e) {
             const query = e.target.value.trim();
             clearTimeout(searchTimeout);
@@ -264,9 +767,13 @@
                     
                     const suggestionsDiv = document.getElementById('suggestions');
                     if (data.results && data.results.length > 0) {
-                        suggestionsDiv.innerHTML = data.results.map(song => 
+                        suggestionsDiv.innerHTML = data.results.map((song, index) => 
                             `<div class="song-suggestion-item" onclick="selectSong('${song.song.replace(/'/g, "\\'")}', '${song.artist.replace(/'/g, "\\'")}')">
-                                <strong>${song.song}</strong> - ${song.artist}
+                                <i class="fas fa-music"></i>
+                                <div>
+                                    <strong>${song.song}</strong>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 3px;">${song.artist}</div>
+                                </div>
                             </div>`
                         ).join('');
                         suggestionsDiv.style.display = 'block';
@@ -288,9 +795,10 @@
         async function getRecommendations(songName = null, artistName = null) {
             const songInput = document.getElementById('songInput');
             const song = songName || songInput.value.trim();
+            const searchBtn = document.getElementById('searchBtn');
             
             if (!song) {
-                showError('Please enter a song name');
+                showError('Please enter a song name to get recommendations');
                 return;
             }
 
@@ -298,6 +806,7 @@
             document.getElementById('resultsSection').style.display = 'none';
             document.getElementById('error').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
+            searchBtn.disabled = true;
 
             try {
                 let url = `${API_BASE_URL}/recommend?song_name=${encodeURIComponent(song)}&num_recommendations=12`;
@@ -321,49 +830,76 @@
                 showError(error.message);
             } finally {
                 document.getElementById('loading').style.display = 'none';
+                searchBtn.disabled = false;
             }
         }
 
         function displayResults(data) {
             const resultsSection = document.getElementById('resultsSection');
-            const selectedSongDiv = document.getElementById('selectedSong');
+            const selectedSongName = document.getElementById('selectedSongName');
+            const selectedArtistName = document.getElementById('selectedArtistName');
             const recommendationsDiv = document.getElementById('recommendations');
+            const recommendationsCount = document.getElementById('recommendationsCount');
 
             // Display selected song
-            selectedSongDiv.innerHTML = `
-                <h3>🎵 Selected Song</h3>
-                <p><strong>${data.selected_song.song}</strong> by ${data.selected_song.artist}</p>
-            `;
+            selectedSongName.textContent = data.selected_song.song;
+            selectedArtistName.textContent = `by ${data.selected_song.artist}`;
+
+            // Display recommendations count
+            recommendationsCount.textContent = `${data.total_recommendations} songs`;
 
             // Display recommendations
             if (data.recommendations && data.recommendations.length > 0) {
-                recommendationsDiv.innerHTML = data.recommendations.map(rec => `
-                    <div class="recommendation-card">
-                        <h4>${rec.song}</h4>
-                        <p><strong>Artist:</strong> ${rec.artist}</p>
-                        <span class="similarity-score">Similarity: ${(rec.similarity_score * 100).toFixed(1)}%</span>
-                    </div>
-                `).join('');
+                recommendationsDiv.innerHTML = data.recommendations.map((rec, index) => {
+                    const similarityPercent = (rec.similarity_score * 100).toFixed(1);
+                    const similarityColor = rec.similarity_score > 0.7 ? 'var(--success)' : 
+                                          rec.similarity_score > 0.5 ? 'var(--warning)' : 'var(--primary)';
+                    
+                    return `
+                        <div class="recommendation-card" style="animation: fadeInUp 0.5s ease-out ${index * 0.1}s both;">
+                            <div class="rank">${index + 1}</div>
+                            <div class="song-icon"><i class="fas fa-music"></i></div>
+                            <h4>${rec.song}</h4>
+                            <div class="artist"><i class="fas fa-user"></i> ${rec.artist}</div>
+                            <div class="similarity-badge" style="border-color: ${similarityColor}; color: ${similarityColor};">
+                                <i class="fas fa-chart-line"></i>
+                                <span class="score">${similarityPercent}%</span>
+                                <span>similar</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             } else {
-                recommendationsDiv.innerHTML = '<p>No recommendations found.</p>';
+                recommendationsDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 40px;">No recommendations found.</p>';
             }
 
             resultsSection.style.display = 'block';
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function showError(message) {
             const errorDiv = document.getElementById('error');
-            errorDiv.textContent = `Error: ${message}`;
-            errorDiv.style.display = 'block';
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorDiv.style.display = 'flex';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
         }
 
-        // Allow Enter key to trigger search
+        // Enter key to search
         document.getElementById('songInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 getRecommendations();
             }
         });
+
+        // Load stats on page load
+        loadStats();
     </script>
 </body>
 </html>
-
